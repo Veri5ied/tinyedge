@@ -13,7 +13,8 @@ import { createHttpLlmClient } from "../core/llm-client";
 import { createDeliveryCache } from "./idempotency";
 import { createOctokitCache } from "./octokit-cache";
 
-const EVENT_NAMES = new Set(["pull_request.opened", "pull_request.synchronize"]);
+const EVENT_NAME = "pull_request";
+const EVENT_ACTIONS = new Set(["opened", "synchronize"]);
 
 type WebhookHeaders = {
   "x-github-event": string | undefined;
@@ -73,7 +74,7 @@ export function startServer(): void {
       return;
     }
 
-    if (!EVENT_NAMES.has(eventName)) {
+    if (eventName !== EVENT_NAME) {
       metrics.deliveriesIgnored += 1;
       res.status(202).send("Ignored event");
       return;
@@ -81,10 +82,17 @@ export function startServer(): void {
 
     try {
       const event = JSON.parse(payload) as {
+        action?: string;
         installation?: { id: number };
         repository?: { name: string; owner?: { login: string } };
         pull_request?: { number: number };
       };
+
+      if (!event.action || !EVENT_ACTIONS.has(event.action)) {
+        metrics.deliveriesIgnored += 1;
+        res.status(202).send("Ignored action");
+        return;
+      }
 
       const installationId = event.installation?.id;
       const owner = event.repository?.owner?.login;
