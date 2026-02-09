@@ -1,6 +1,7 @@
 # Tinyedge
 
 Tinyedge is an open-source GitHub App that reviews pull requests and highlights:
+
 - Suggested test scenarios
 - Risky or non-obvious logic changes
 
@@ -28,15 +29,27 @@ Tinyedge exists to point out what deserves attention.
 
 ## Setup
 
+### GitHub App permissions
+
+Tinyedge posts PR comments via the Issues API (GitHub treats PRs as issues). Use these permissions:
+
+- Issues: **Read & Write**
+- Pull requests: **Read & Write**
+- Contents: **Read**
+
+After changing permissions, **uninstall and reinstall** the GitHub App on the target repo so the new scopes apply.
+
 ### Environment variables
 
 Required:
+
 - `GITHUB_APP_ID`: GitHub App ID
 - `GITHUB_PRIVATE_KEY`: GitHub App private key (PEM). Newlines can be escaped as `\n`.
 - `GITHUB_WEBHOOK_SECRET`: Webhook secret configured in the GitHub App
 - `TINYEDGE_LLM_URL`: HTTP endpoint that accepts `{ "prompt": "..." }` and returns `{ "text": "..." }`
 
 Optional:
+
 - `TINYEDGE_LLM_API_KEY`: Optional bearer token for the LLM endpoint
 - `TINYEDGE_BOT_LOGIN`: Optional GitHub login to identify the Tinyedge comment
 - `PORT`: Optional, defaults to `3000`
