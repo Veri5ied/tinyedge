@@ -1,8 +1,8 @@
-import { Octokit } from "octokit";
+import { OctokitWithRest } from "./octokit";
 import { parseResult } from "../core/parse-result";
 
 export async function findExistingComment(
-  octokit: Octokit,
+  octokit: OctokitWithRest,
   owner: string,
   repo: string,
   issueNumber: number,
