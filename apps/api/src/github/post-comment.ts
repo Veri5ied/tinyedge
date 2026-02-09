@@ -1,7 +1,7 @@
-import { Octokit } from "octokit";
+import { OctokitWithRest } from "./octokit";
 
 export async function postComment(
-  octokit: Octokit,
+  octokit: OctokitWithRest,
   owner: string,
   repo: string,
   issueNumber: number,

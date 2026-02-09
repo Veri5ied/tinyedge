@@ -1,7 +1,7 @@
-import { Octokit } from "octokit";
+import { OctokitWithRest } from "./octokit";
 
 export async function fetchDiff(
-  octokit: Octokit,
+  octokit: OctokitWithRest,
   owner: string,
   repo: string,
   pullNumber: number
