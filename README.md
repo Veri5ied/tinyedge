@@ -1,86 +1,59 @@
-# Tinyedge
+# Tinyedge Monorepo
 
-Tinyedge is an open-source GitHub App that reviews pull requests and highlights:
+Tinyedge is an open-source GitHub App that reviews pull requests and returns:
 - Suggested test scenarios
 - Risky or non-obvious logic changes
 
-Tinyedge does not write tests.
-Tinyedge does not replace code review.
-Tinyedge exists to point out what deserves attention.
+It is intentionally narrow in scope and operates only on the diff it receives.
 
-## What Tinyedge does
+## Repository layout
 
-- Runs on pull request open and update events
-- Analyzes only the changed diff
-- Suggests missing test scenarios
-- Flags risky logic changes
-- Posts a single comment per pull request
+- `apps/api`: Tinyedge GitHub App (Express webhook server)
+- `apps/web`: Next.js frontend placeholder (no app code yet)
 
-## What Tinyedge does NOT do
+## Goals
 
-- No test code generation
-- No style or formatting comments
-- No dashboards or UI
-- No configuration files
-- No database
-- No analytics
-- No CI replacement
+- Analyze only changed diffs
+- Suggest concrete test scenarios
+- Flag risky or non-obvious logic changes
+- Stay silent when there is nothing meaningful to say
 
-## Setup
+## Non-goals
 
-### Environment variables
+- Test code generation
+- Style or formatting comments
+- UI dashboards or analytics
+- CI replacement
 
-Required:
-- `GITHUB_APP_ID`: GitHub App ID
-- `GITHUB_PRIVATE_KEY`: GitHub App private key (PEM). Newlines can be escaped as `\n`.
-- `GITHUB_WEBHOOK_SECRET`: Webhook secret configured in the GitHub App
-- `TINYEDGE_LLM_URL`: HTTP endpoint that accepts `{ "prompt": "..." }` and returns `{ "text": "..." }`
-
-Optional:
-- `TINYEDGE_LLM_API_KEY`: Optional bearer token for the LLM endpoint
-- `TINYEDGE_BOT_LOGIN`: Optional GitHub login to identify the Tinyedge comment
-- `PORT`: Optional, defaults to `3000`
-- `TINYEDGE_DRY_RUN`: Set to `true` to skip posting comments
-- `TINYEDGE_MAX_DIFF_BYTES`: Max diff size in bytes (default `500000`)
-- `TINYEDGE_REQUEST_TIMEOUT_MS`: LLM request timeout in ms (default `15000`)
-- `TINYEDGE_RETRY_ATTEMPTS`: Retry attempts for GitHub/LLM calls (default `2`)
-- `TINYEDGE_RETRY_DELAY_MS`: Delay between retries in ms (default `500`)
-- `TINYEDGE_DELIVERY_TTL_MS`: Delivery id cache TTL in ms (default `600000`)
-- `TINYEDGE_OCTOKIT_CACHE_TTL_MS`: Octokit cache TTL in ms (default `300000`)
-
-### Install
+## Quick start (api)
 
 ```bash
 pnpm install
+pnpm -C apps/api run build
+pnpm -C apps/api run dev
 ```
 
-### Build
+## Configuration (api)
 
-```bash
-pnpm run build
-```
+Required:
+- `GITHUB_APP_ID`
+- `GITHUB_PRIVATE_KEY`
+- `GITHUB_WEBHOOK_SECRET`
+- `TINYEDGE_LLM_URL`
 
-### Run
+Optional:
+- `TINYEDGE_LLM_API_KEY`
+- `TINYEDGE_BOT_LOGIN`
+- `PORT`
+- `TINYEDGE_DRY_RUN`
+- `TINYEDGE_MAX_DIFF_BYTES`
+- `TINYEDGE_REQUEST_TIMEOUT_MS`
+- `TINYEDGE_RETRY_ATTEMPTS`
+- `TINYEDGE_RETRY_DELAY_MS`
+- `TINYEDGE_DELIVERY_TTL_MS`
+- `TINYEDGE_OCTOKIT_CACHE_TTL_MS`
 
-```bash
-pnpm start
-```
+## Docs
 
-## Local mock LLM
-
-The mock server is useful for local wiring without external dependencies.
-
-1. Start the mock server:
-
-```bash
-pnpm run mock-llm
-```
-
-2. Point Tinyedge at it:
-
-- `TINYEDGE_LLM_URL=http://localhost:5050/llm`
-- `MOCK_LLM_PORT=5050` (optional)
-
-## License
-
-MIT
+- `apps/api/README.md`
+- `apps/api/SELF_HOSTING.md`

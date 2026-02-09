@@ -1,0 +1,29 @@
+{
+  "name": "tinyedge",
+  "version": "0.1.0",
+  "description": "Tinyedge is an open-source GitHub App that reviews PR diffs and returns test suggestions and risk flags.",
+  "private": true,
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "mock-llm": "tsx src/app/mock-llm-entry.ts"
+  },
+  "dependencies": {
+    "@octokit/app": "^14.0.0",
+    "@octokit/webhooks": "^13.0.0",
+    "octokit": "^4.0.2",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.12",
+    "tsx": "^4.15.6",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

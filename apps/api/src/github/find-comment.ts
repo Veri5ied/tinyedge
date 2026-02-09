@@ -5,7 +5,7 @@ export async function findExistingComment(
   octokit: Octokit,
   owner: string,
   repo: string,
-  issueNumber: number
+  issueNumber: number,
 ): Promise<number | null> {
   const preferredLogin = process.env.TINYEDGE_BOT_LOGIN;
   const comments = await octokit.paginate(octokit.rest.issues.listComments, {
