@@ -6,7 +6,7 @@ export async function postComment(
   repo: string,
   issueNumber: number,
   body: string,
-  commentId?: number | null
+  commentId?: number | null,
 ): Promise<void> {
   if (commentId) {
     await octokit.rest.issues.updateComment({
