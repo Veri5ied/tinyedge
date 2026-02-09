@@ -1,9 +1,17 @@
 import { AnalysisResult } from "../types/analysis";
 
-type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue };
+type JsonValue =
+  | null
+  | boolean
+  | number
+  | string
+  | JsonValue[]
+  | { [key: string]: JsonValue };
 
 function isStringArray(value: JsonValue): value is string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string");
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "string")
+  );
 }
 
 export function parseResult(raw: string): AnalysisResult {
@@ -24,11 +32,16 @@ export function parseResult(raw: string): AnalysisResult {
   }
 
   const keys = Object.keys(parsed);
-  if (keys.length !== 2 || !keys.includes("testSuggestions") || !keys.includes("riskFlags")) {
+  if (
+    keys.length !== 2 ||
+    !keys.includes("testSuggestions") ||
+    !keys.includes("riskFlags")
+  ) {
     throw new Error("LLM response had unexpected shape");
   }
 
-  const testSuggestions = (parsed as { testSuggestions: JsonValue }).testSuggestions;
+  const testSuggestions = (parsed as { testSuggestions: JsonValue })
+    .testSuggestions;
   const riskFlags = (parsed as { riskFlags: JsonValue }).riskFlags;
 
   if (!isStringArray(testSuggestions) || !isStringArray(riskFlags)) {

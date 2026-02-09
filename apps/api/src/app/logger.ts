@@ -1,6 +1,10 @@
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
-export function log(level: LogLevel, message: string, meta: Record<string, unknown> = {}): void {
+export function log(
+  level: LogLevel,
+  message: string,
+  meta: Record<string, unknown> = {},
+): void {
   const entry = {
     level,
     message,

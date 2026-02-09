@@ -1,7 +1,7 @@
 export async function retry<T>(
   fn: () => Promise<T>,
   attempts: number,
-  delayMs: number
+  delayMs: number,
 ): Promise<T> {
   let lastError: unknown;
 
