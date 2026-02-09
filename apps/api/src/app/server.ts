@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { Webhooks } from "@octokit/webhooks";
+import crypto from "node:crypto";
 import { createGitHubApp } from "./github-app";
 import { analyzeDiff } from "../core/analyze-diff";
 import { fetchDiff } from "../github/fetch-diff";
@@ -24,7 +24,6 @@ type WebhookHeaders = {
 export function startServer(): void {
   const config = loadConfig();
   const app = express();
-  const webhooks = new Webhooks({ secret: config.webhookSecret });
   const githubApp = createGitHubApp();
   const llmClient = createHttpLlmClient({
     url: config.llmUrl,
@@ -67,14 +66,7 @@ export function startServer(): void {
 
     const payload = req.body instanceof Buffer ? req.body.toString("utf8") : "";
 
-    try {
-      await webhooks.verifyAndReceive({
-        id: deliveryId,
-        name: eventName,
-        payload,
-        signature,
-      });
-    } catch (error) {
+    if (!verifySignature(config.webhookSecret, payload, signature)) {
       metrics.deliveriesInvalid += 1;
       log("warn", "Invalid webhook signature", { deliveryId, eventName });
       res.status(401).send("Invalid signature");
@@ -188,4 +180,20 @@ export function startServer(): void {
   app.listen(config.port, () => {
     log("info", "Tinyedge listening", { port: config.port });
   });
+}
+
+function verifySignature(secret: string, payload: string, signature: string): boolean {
+  if (!signature.startsWith("sha256=")) {
+    return false;
+  }
+
+  const expected = `sha256=${crypto.createHmac("sha256", secret).update(payload).digest("hex")}`;
+  const expectedBuffer = Buffer.from(expected);
+  const signatureBuffer = Buffer.from(signature);
+
+  if (expectedBuffer.length !== signatureBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuffer, signatureBuffer);
 }
