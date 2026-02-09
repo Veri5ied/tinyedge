@@ -50,14 +50,14 @@ Optional:
 
 ```bash
 pnpm install
-pnpm run build
-pnpm start
+pnpm -C apps/api run build
+pnpm -C apps/api start
 ```
 
 ## 4. Run with the Mock LLM
 
 ```bash
-pnpm run mock-llm
+pnpm -C apps/api run mock-llm
 ```
 
 Set:
@@ -75,4 +75,3 @@ Set:
 ## 6. Basic Health Check
 
 A successful webhook delivery returns HTTP 200. Unsupported events return HTTP 202.
-
