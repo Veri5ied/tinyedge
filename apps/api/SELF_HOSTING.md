@@ -15,7 +15,7 @@ This guide covers the minimum steps to run Tinyedge on your own infrastructure.
 3. Set the webhook URL to your public endpoint + `/webhook`.
 4. Set a webhook secret.
 5. Permissions:
-   - Pull requests: Read
+   - Pull requests: Read & Write
    - Issues: Read & Write
    - Contents: Read
 6. Subscribe to events:
@@ -31,11 +31,16 @@ Required:
 - `GITHUB_APP_ID`
 - `GITHUB_PRIVATE_KEY` (PEM content; newlines can be escaped as `\n`)
 - `GITHUB_WEBHOOK_SECRET`
-- `TINYEDGE_LLM_URL`
+- `TINYEDGE_LLM_PROVIDER` (`openai`, `gemini`, or `mock`)
 
 Optional:
 
-- `TINYEDGE_LLM_API_KEY` (optional)
+- `OPENAI_API_KEY` (required for `openai`)
+- `OPENAI_MODEL` (required for `openai`)
+- `OPENAI_BASE_URL` (optional; OpenAI-compatible override)
+- `GEMINI_API_KEY` (required for `gemini`)
+- `GEMINI_MODEL` (required for `gemini`)
+- `TINYEDGE_LLM_URL` (required only for `mock`)
 - `TINYEDGE_BOT_LOGIN` (optional; GitHub login used to detect existing comments)
 - `PORT` (optional; default `3000`)
 - `TINYEDGE_DRY_RUN` (optional; set to `true` to skip posting comments)
@@ -62,6 +67,7 @@ pnpm -C apps/api run mock-llm
 
 Set:
 
+- `TINYEDGE_LLM_PROVIDER=mock`
 - `TINYEDGE_LLM_URL=http://localhost:5050/llm`
 
 ## 5. Production Notes

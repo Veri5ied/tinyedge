@@ -9,7 +9,7 @@ import { loadConfig } from "./config";
 import { log } from "./logger";
 import { createMetrics } from "./metrics";
 import { retry } from "./retry";
-import { createHttpLlmClient } from "../core/llm-client";
+import { createLlmClient } from "../core/llm-client";
 import { createDeliveryCache } from "./idempotency";
 import { createOctokitCache } from "./octokit-cache";
 
@@ -26,9 +26,12 @@ export function startServer(): void {
   const config = loadConfig();
   const app = express();
   const githubApp = createGitHubApp();
-  const llmClient = createHttpLlmClient({
-    url: config.llmUrl,
+  const llmClient = createLlmClient({
+    provider: config.llmProvider,
     apiKey: config.llmApiKey,
+    model: config.llmModel,
+    url: config.llmUrl,
+    baseUrl: config.llmBaseUrl,
     timeoutMs: config.requestTimeoutMs,
   });
 
@@ -74,7 +77,7 @@ export function startServer(): void {
       const payload =
         req.body instanceof Buffer ? req.body.toString("utf8") : "";
 
-      if (!verifySignature(config.webhookSecret, payload, signature)) {
+      if (!verifySignature(config.webhookSecret || "", payload, signature)) {
         metrics.deliveriesInvalid += 1;
         log("warn", "Invalid webhook signature", { deliveryId, eventName });
         res.status(401).send("Invalid signature");
