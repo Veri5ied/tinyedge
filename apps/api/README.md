@@ -50,11 +50,8 @@ Required:
 
 Optional:
 
-- `OPENAI_API_KEY`: Required for `openai`
-- `OPENAI_MODEL`: Required for `openai`
-- `OPENAI_BASE_URL`: Optional override for OpenAI-compatible endpoints
-- `GEMINI_API_KEY`: Required for `gemini`
-- `GEMINI_MODEL`: Required for `gemini`
+- `TINYEDGE_LLM_API_KEY`: Required for `openai` and `gemini`
+- `TINYEDGE_LLM_MODEL`: Required for `openai` and `gemini`
 - `TINYEDGE_LLM_URL`: Required only when `TINYEDGE_LLM_PROVIDER=mock`
 - `TINYEDGE_BOT_LOGIN`: Optional GitHub login to identify the Tinyedge comment
 - `PORT`: Optional, defaults to `3000`
@@ -72,16 +69,16 @@ OpenAI:
 
 ```bash
 TINYEDGE_LLM_PROVIDER=openai
-OPENAI_API_KEY=...
-OPENAI_MODEL=gpt-4o-mini
+TINYEDGE_LLM_API_KEY=...
+TINYEDGE_LLM_MODEL=gpt-4o-mini
 ```
 
 Gemini:
 
 ```bash
 TINYEDGE_LLM_PROVIDER=gemini
-GEMINI_API_KEY=...
-GEMINI_MODEL=gemini-1.5-flash
+TINYEDGE_LLM_API_KEY=...
+TINYEDGE_LLM_MODEL=gemini-1.5-flash
 ```
 
 ### Install

@@ -35,11 +35,8 @@ Required:
 
 Optional:
 
-- `OPENAI_API_KEY` (required for `openai`)
-- `OPENAI_MODEL` (required for `openai`)
-- `OPENAI_BASE_URL` (optional; OpenAI-compatible override)
-- `GEMINI_API_KEY` (required for `gemini`)
-- `GEMINI_MODEL` (required for `gemini`)
+- `TINYEDGE_LLM_API_KEY` (required for `openai` and `gemini`)
+- `TINYEDGE_LLM_MODEL` (required for `openai` and `gemini`)
 - `TINYEDGE_LLM_URL` (required only for `mock`)
 - `TINYEDGE_BOT_LOGIN` (optional; GitHub login used to detect existing comments)
 - `PORT` (optional; default `3000`)
