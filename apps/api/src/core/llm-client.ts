@@ -9,7 +9,6 @@ export type LlmConfig = {
   apiKey?: string;
   model?: string;
   url?: string;
-  baseUrl?: string;
   timeoutMs: number;
 };
 
@@ -30,10 +29,10 @@ export function createLlmClient(config: LlmConfig): LlmClient {
 
 function createOpenAiClient(config: LlmConfig): LlmClient {
   if (!config.apiKey) {
-    throw new Error("OPENAI_API_KEY is required for OpenAI");
+    throw new Error("TINYEDGE_LLM_API_KEY is required for OpenAI");
   }
   if (!config.model) {
-    throw new Error("OPENAI_MODEL is required for OpenAI");
+    throw new Error("TINYEDGE_LLM_MODEL is required for OpenAI");
   }
 
   return {
@@ -43,7 +42,7 @@ function createOpenAiClient(config: LlmConfig): LlmClient {
 
       try {
         const { default: OpenAI } = (await import("openai")) as {
-          default: new (options: { apiKey: string; baseURL?: string }) => {
+          default: new (options: { apiKey: string }) => {
             chat: {
               completions: {
                 create: (input: {
@@ -59,7 +58,6 @@ function createOpenAiClient(config: LlmConfig): LlmClient {
 
         const client = new OpenAI({
           apiKey: config.apiKey!,
-          ...(config.baseUrl ? { baseURL: config.baseUrl } : {}),
         });
 
         const completion = await client.chat.completions.create({
@@ -81,10 +79,10 @@ function createOpenAiClient(config: LlmConfig): LlmClient {
 
 function createGeminiClient(config: LlmConfig): LlmClient {
   if (!config.apiKey) {
-    throw new Error("GEMINI_API_KEY is required for Gemini");
+    throw new Error("TINYEDGE_LLM_API_KEY is required for Gemini");
   }
   if (!config.model) {
-    throw new Error("GEMINI_MODEL is required for Gemini");
+    throw new Error("TINYEDGE_LLM_MODEL is required for Gemini");
   }
 
   return {

@@ -5,7 +5,6 @@ export type TinyedgeConfig = {
   llmApiKey?: string;
   llmModel?: string;
   llmUrl?: string;
-  llmBaseUrl?: string;
   dryRun: boolean;
   maxDiffBytes: number;
   requestTimeoutMs: number;
@@ -18,44 +17,19 @@ export type TinyedgeConfig = {
 export function loadConfig(): TinyedgeConfig {
   const missing: string[] = [];
 
-  const webhookSecret = process.env.GITHUB_WEBHOOK_SECRET;
-  if (!webhookSecret) missing.push("GITHUB_WEBHOOK_SECRET");
-
-  const providerRaw = process.env.TINYEDGE_LLM_PROVIDER;
+  const webhookSecret = requiredEnv("GITHUB_WEBHOOK_SECRET", missing);
   const llmUrl = process.env.TINYEDGE_LLM_URL;
-  const llmProvider =
-    (providerRaw?.toLowerCase() as TinyedgeConfig["llmProvider"] | undefined) ??
-    (llmUrl ? "mock" : undefined);
+  const llmProvider = resolveProvider(
+    process.env.TINYEDGE_LLM_PROVIDER,
+    llmUrl,
+    missing,
+  );
 
-  if (!llmProvider) {
-    missing.push("TINYEDGE_LLM_PROVIDER");
-  } else if (!["openai", "gemini", "mock"].includes(llmProvider)) {
-    throw new Error(`Unsupported TINYEDGE_LLM_PROVIDER: ${llmProvider}`);
-  }
+  const isMock = llmProvider === "mock";
+  if (isMock && !llmUrl) missing.push("TINYEDGE_LLM_URL");
 
-  let llmApiKey: string | undefined;
-  let llmModel: string | undefined;
-  let llmBaseUrl: string | undefined;
-
-  if (llmProvider === "mock") {
-    if (!llmUrl) missing.push("TINYEDGE_LLM_URL");
-  } else {
-    if (llmProvider === "openai") {
-      llmApiKey =
-        process.env.OPENAI_API_KEY ?? process.env.TINYEDGE_LLM_API_KEY;
-      llmModel = process.env.OPENAI_MODEL ?? process.env.TINYEDGE_LLM_MODEL;
-      llmBaseUrl =
-        process.env.OPENAI_BASE_URL ?? process.env.TINYEDGE_LLM_BASE_URL;
-      if (!llmApiKey) missing.push("OPENAI_API_KEY");
-      if (!llmModel) missing.push("OPENAI_MODEL");
-    } else if (llmProvider === "gemini") {
-      llmApiKey =
-        process.env.GEMINI_API_KEY ?? process.env.TINYEDGE_LLM_API_KEY;
-      llmModel = process.env.GEMINI_MODEL ?? process.env.TINYEDGE_LLM_MODEL;
-      if (!llmApiKey) missing.push("GEMINI_API_KEY");
-      if (!llmModel) missing.push("GEMINI_MODEL");
-    }
-  }
+  const llmApiKey = isMock ? undefined : requiredEnv("TINYEDGE_LLM_API_KEY", missing);
+  const llmModel = isMock ? undefined : requiredEnv("TINYEDGE_LLM_MODEL", missing);
 
   if (missing.length > 0) {
     throw new Error(`Missing required env: ${missing.join(", ")}`);
@@ -84,7 +58,6 @@ export function loadConfig(): TinyedgeConfig {
     llmApiKey,
     llmModel,
     llmUrl,
-    llmBaseUrl,
     dryRun,
     maxDiffBytes,
     requestTimeoutMs,
@@ -93,4 +66,28 @@ export function loadConfig(): TinyedgeConfig {
     deliveryTtlMs,
     octokitCacheTtlMs,
   };
+}
+
+function requiredEnv(name: string, missing: string[]): string | undefined {
+  const value = process.env[name];
+  if (!value) missing.push(name);
+  return value;
+}
+
+function resolveProvider(
+  raw: string | undefined,
+  llmUrl: string | undefined,
+  missing: string[],
+): TinyedgeConfig["llmProvider"] | undefined {
+  const normalized = raw?.toLowerCase();
+  if (normalized) {
+    if (normalized === "openai" || normalized === "gemini" || normalized === "mock") {
+      return normalized;
+    }
+    throw new Error(`Unsupported TINYEDGE_LLM_PROVIDER: ${normalized}`);
+  }
+
+  if (llmUrl) return "mock";
+  missing.push("TINYEDGE_LLM_PROVIDER");
+  return undefined;
 }

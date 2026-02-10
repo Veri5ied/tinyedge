@@ -31,7 +31,6 @@ export function startServer(): void {
     apiKey: config.llmApiKey,
     model: config.llmModel,
     url: config.llmUrl,
-    baseUrl: config.llmBaseUrl,
     timeoutMs: config.requestTimeoutMs,
   });
 

@@ -42,11 +42,8 @@ Required:
 - `TINYEDGE_LLM_PROVIDER` (`openai`, `gemini`, or `mock`)
 
 Optional:
-- `OPENAI_API_KEY`
-- `OPENAI_MODEL`
-- `OPENAI_BASE_URL`
-- `GEMINI_API_KEY`
-- `GEMINI_MODEL`
+- `TINYEDGE_LLM_API_KEY`
+- `TINYEDGE_LLM_MODEL`
 - `TINYEDGE_LLM_URL` (required only for `mock`)
 - `TINYEDGE_BOT_LOGIN`
 - `PORT`
