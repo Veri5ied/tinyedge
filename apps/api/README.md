@@ -46,11 +46,16 @@ Required:
 - `GITHUB_APP_ID`: GitHub App ID
 - `GITHUB_PRIVATE_KEY`: GitHub App private key (PEM). Newlines can be escaped as `\n`.
 - `GITHUB_WEBHOOK_SECRET`: Webhook secret configured in the GitHub App
-- `TINYEDGE_LLM_URL`: HTTP endpoint that accepts `{ "prompt": "..." }` and returns `{ "text": "..." }`
+- `TINYEDGE_LLM_PROVIDER`: `openai`, `gemini`, or `mock`
 
 Optional:
 
-- `TINYEDGE_LLM_API_KEY`: Optional bearer token for the LLM endpoint
+- `OPENAI_API_KEY`: Required for `openai`
+- `OPENAI_MODEL`: Required for `openai`
+- `OPENAI_BASE_URL`: Optional override for OpenAI-compatible endpoints
+- `GEMINI_API_KEY`: Required for `gemini`
+- `GEMINI_MODEL`: Required for `gemini`
+- `TINYEDGE_LLM_URL`: Required only when `TINYEDGE_LLM_PROVIDER=mock`
 - `TINYEDGE_BOT_LOGIN`: Optional GitHub login to identify the Tinyedge comment
 - `PORT`: Optional, defaults to `3000`
 - `TINYEDGE_DRY_RUN`: Set to `true` to skip posting comments
@@ -60,6 +65,24 @@ Optional:
 - `TINYEDGE_RETRY_DELAY_MS`: Delay between retries in ms (default `500`)
 - `TINYEDGE_DELIVERY_TTL_MS`: Delivery id cache TTL in ms (default `600000`)
 - `TINYEDGE_OCTOKIT_CACHE_TTL_MS`: Octokit cache TTL in ms (default `300000`)
+
+### LLM provider examples
+
+OpenAI:
+
+```bash
+TINYEDGE_LLM_PROVIDER=openai
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Gemini:
+
+```bash
+TINYEDGE_LLM_PROVIDER=gemini
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-1.5-flash
+```
 
 ### Install
 
@@ -91,6 +114,7 @@ pnpm -C apps/api run mock-llm
 
 2. Point Tinyedge at it:
 
+- `TINYEDGE_LLM_PROVIDER=mock`
 - `TINYEDGE_LLM_URL=http://localhost:5050/llm`
 - `MOCK_LLM_PORT=5050` (optional)
 
