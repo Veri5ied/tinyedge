@@ -41,4 +41,3 @@ pnpm -C apps/web dlx shadcn@latest add button
 ## Notes
 
 - Dependencies are set to the `latest` tag. If you prefer reproducible builds, pin exact versions after your first install.
-
