@@ -22,7 +22,7 @@ export function createOctokitCache(app: App, ttlMs: number) {
       type: "installation",
       installationId,
     });
-    const token = typeof auth === "string" ? auth : auth.token;
+    const token = extractAuthToken(auth);
     const octokit = new OctokitWithRest({ auth: token });
     entries.set(installationId, { octokit, expiresAt: now + ttlMs });
 
@@ -36,4 +36,20 @@ export function createOctokitCache(app: App, ttlMs: number) {
 
     return octokit;
   };
+}
+
+function extractAuthToken(auth: unknown): string {
+  if (typeof auth === "string") {
+    return auth;
+  }
+
+  if (isObject(auth) && typeof auth.token === "string") {
+    return auth.token;
+  }
+
+  throw new Error("Failed to resolve installation auth token");
+}
+
+function isObject(value: unknown): value is { [key: string]: unknown } {
+  return value !== null && typeof value === "object";
 }

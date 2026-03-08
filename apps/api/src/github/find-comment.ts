@@ -1,5 +1,6 @@
 import { OctokitWithRest } from "./octokit";
 import { parseResult } from "../core/parse-result";
+import { isTinyedgeComment } from "../core/comment-format";
 
 export async function findExistingComment(
   octokit: OctokitWithRest,
@@ -23,6 +24,10 @@ export async function findExistingComment(
 
     if (typeof comment.body !== "string") {
       continue;
+    }
+
+    if (isTinyedgeComment(comment.body)) {
+      return comment.id;
     }
 
     try {

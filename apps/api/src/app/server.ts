@@ -12,6 +12,7 @@ import { retry } from "./retry";
 import { createLlmClient } from "../core/llm-client";
 import { createDeliveryCache } from "./idempotency";
 import { createOctokitCache } from "./octokit-cache";
+import { renderComment } from "../core/comment-format";
 
 const EVENT_NAME = "pull_request";
 const EVENT_ACTIONS = new Set(["opened", "synchronize"]);
@@ -151,7 +152,7 @@ export function startServer(): void {
           throw error;
         }
 
-        const commentBody = JSON.stringify(analysis, null, 2);
+        const commentBody = renderComment(analysis);
         const existingCommentId = await retry(
           () => findExistingComment(octokit, owner, repo, pullNumber),
           config.retryAttempts,
